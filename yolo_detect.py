@@ -41,10 +41,10 @@ if not os.path.exists(MODEL_PATH):
         # Final fallback to standard training output location
         MODEL_PATH = os.path.join(DATASET_PATH if 'DATASET_PATH' in locals() else BASE_DIR, "runs", "detect", "train", "weights", "best.pt")
 
-# Aggressive Stress Test Settings
-CONFIDENCE_THRESHOLD = 0.01
-IOU_THRESHOLD        = 0.50
-IMG_SIZE             = 1024
+# Detection thresholds
+CONFIDENCE_THRESHOLD = 0.25
+IOU_THRESHOLD        = 0.45
+IMG_SIZE             = 640
 
 # Class names expected from the model
 # Adapt these to match the Roboflow dataset labels
@@ -227,10 +227,13 @@ def detect_stickers(image_input, model_path: str = None):
         x1, y1 = max(0, x1), max(0, y1)
         x2, y2 = min(w_img, x2), min(h_img, y2)
 
-        # STRESS TEST: Remove size filtering to see everything
-        # area_ratio = (x2 - x1) * (y2 - y1) / (w_img * h_img)
-        # if area_ratio > 0.7 or area_ratio < 0.005:
-        #     continue
+        # Diagnostic Step: Calculate relative area
+        area_ratio = (x2 - x1) * (y2 - y1) / (w_img * h_img)
+
+        # Robustness: Filter out detections that are too large (likely the cube itself)
+        # We also filter out extremely tiny specks below 0.5% of area
+        if area_ratio > 0.7 or area_ratio < 0.005:
+            continue
 
         # Map class name to a Rubik's color if possible
         mapped_color = COLOR_CLASSES.get(cname, None)

@@ -306,17 +306,30 @@ def run_method_b(raw_bytes, expected_center):
         # Get stickers AND annotated overlay
         overlay, stickers = yolo_detect.detect_and_draw(raw_bytes)
         
-        if not stickers:
-            # Diagnostic: Get ALL raw detections to show what the AI saw
-            diag_bgr, _ = yolo_detect.detect_and_draw(raw_bytes)
-            diag_rgb = cv2.cvtColor(diag_bgr, cv2.COLOR_BGR2RGB)
-            return None, None, diag_rgb, "❌ No stickers detected. AI see 0 objects. Please try a different angle."
-
         if len(stickers) != 9:
-            # Diagnostic Overlay
+            # HYBRID FALLBACK: If stickers are missing but cube is found
+            cube_res = yolo_detect.get_cube_bbox(raw_bytes, draw=True)
+            if cube_res:
+                # 1. Use mathematical grid division
+                det = yolo_detect.get_face_colors_from_crop(cube_res["cropped"], classifier_fn=lambda b: classify_color_lab(b, get_std_colors()))
+                
+                # 2. Extract raw BGRs for feedback
+                h, w = cube_res["cropped"].shape[:2]
+                ch, cw = h//3, w//3
+                raw_bgrs = []
+                for r in range(3):
+                    for c in range(3):
+                        patch = cube_res["cropped"][r*ch:(r+1)*ch, c*cw:(c+1)*cw]
+                        raw_bgrs.append(np.median(patch, axis=(0,1)).astype(np.uint8))
+                
+                # 3. Success with Hybrid mode
+                overlay = cv2.cvtColor(cube_res["annotated"], cv2.COLOR_BGR2RGB)
+                return det, raw_bgrs, overlay, None
+            
+            # Diagnostic Overlay (if no cube and no 9 stickers)
             diag_bgr, _ = yolo_detect.detect_and_draw(raw_bytes)
             diag_rgb = cv2.cvtColor(diag_bgr, cv2.COLOR_BGR2RGB)
-            msg = f"⚠️ YOLO detected {len(stickers)} features (expected 9). Labels: {', '.join([s['class_name'] for s in stickers])}"
+            msg = f"⚠️ YOLO detected {len(stickers)} features (expected 9). Falling back to diagnostic view."
             return None, None, diag_rgb, msg
 
         std = get_std_colors()
@@ -330,10 +343,9 @@ def run_method_b(raw_bytes, expected_center):
             else:
                 det.append(classify_color_lab(bgr, std))
         
-        # 3. Get annotated image (showing bounding boxes)
+        # Success with pure YOLO stickers
         annotated_bgr, _ = yolo_detect.detect_and_draw(raw_bytes)
         overlay = cv2.cvtColor(annotated_bgr, cv2.COLOR_BGR2RGB)
-        
         return det, raw_bgrs, overlay, None
         
     except Exception as e:
