@@ -1,6 +1,7 @@
 streamlit
 numpy
 opencv-python-headless
-ultralytics
+Pillow
 kociemba
 scikit-learn
+ultralytics
