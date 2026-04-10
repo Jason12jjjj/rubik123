@@ -1,6 +1,6 @@
+opencv-python-headless
 streamlit
 numpy
-opencv-python
 Pillow
 kociemba
 scikit-learn
