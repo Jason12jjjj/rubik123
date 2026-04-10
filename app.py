@@ -23,42 +23,72 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
+/* ── Global Studio Aesthetic ── */
 html,body,[data-testid="stAppViewContainer"],[data-testid="stMain"]{
     font-family:'Outfit',sans-serif!important;
-    background:#f4f7fb!important; color:#1e293b!important;}
-[data-testid="stMainBlockContainer"]{padding-top:30px!important;}
+    background: radial-gradient(circle at 0% 0%, #f8fafc 0%, #e2e8f0 100%)!important;
+    color:#1e293b!important;
+}
+[data-testid="stMainBlockContainer"]{padding-top:40px!important;}
 
-/* ── Minimalist Card ── */
-.mcard{background:#ffffff; border:none; border-radius:24px;
-    padding:28px; margin-bottom:20px; box-shadow:0 10px 30px -5px rgba(0,0,0,0.05), 0 4px 10px -2px rgba(0,0,0,0.02);}
-.slabel{font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
-    color:#94a3b8; margin-bottom:12px; display:block; opacity:0.8;}
+/* ── Glassmorphic Cards ── */
+.mcard{
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 28px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05), 0 5px 15px -5px rgba(0,0,0,0.02);
+}
+.slabel{
+    font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+    color: #64748b; margin-bottom: 14px; display: block; opacity: 0.9;
+}
 
-/* ── Unified Power Row ── */
-.power-row{display:flex; gap:8px; margin-bottom:15px; flex-wrap:wrap;}
-.power-btn{flex:1; min-width:85px; background:#ffffff; border-radius:12px; padding:12px 6px;
-    text-align:center; font-size:12px; font-weight:700; border:1.8px solid #f1f5f9; 
-    transition:all 0.2s ease; cursor:pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
-.power-btn:hover{transform:translateY(-2px); border-color:#6366f1; box-shadow:0 8px 20px -5px rgba(99,102,241,0.2);}
+/* ── Premium Control Bar ── */
+.power-btn{
+    border-radius: 14px!important; font-weight: 700!important; 
+    border: 1px solid rgba(255,255,255,0.8)!important;
+    background: rgba(255,255,255,0.5)!important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05)!important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)!important;
+}
 
-/* ── Grid Aesthetics ── */
-.stButton>button{border-radius:12px!important; font-family:'Outfit',sans-serif!important;
-    font-weight:700!important; transition:all 0.15s cubic-bezier(0.4, 0, 0.2, 1)!important;
-    border:1.5px solid #f1f5f9!important; background:#ffffff!important;}
-.stButton>button:hover{border-color:#6366f1!important; transform:scale(1.02);}
+/* ── Tactile Grid Stickers ── */
+.stButton>button{
+    border-radius: 12px!important; 
+    font-family: 'Outfit',sans-serif!important;
+    font-weight: 800!important;
+    background: #ffffff!important;
+    border: 1.5px solid #f1f5f9!important;
+    box-shadow: inset 0 -4px 6px rgba(0,0,0,0.03), 0 4px 10px -2px rgba(0,0,0,0.05)!important;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)!important;
+}
+.stButton>button:hover{
+    transform: translateY(-2px) scale(1.03)!important;
+    box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1)!important;
+    border-color: #6366f1!important;
+}
+.stButton>button:active{transform: scale(0.95)!important;}
 
-/* ── Action Footers ── */
-.action-row{display:flex; gap:10px; margin-top:20px; padding-top:20px; border-top:1px solid #f8fafc;}
+/* ── Action Footer ── */
+.action-row{display:flex; gap:12px; margin-top:24px; padding-top:24px; border-top:1px solid rgba(0,0,0,0.03);}
 
-/* ── Solution box ── */
-.sol-box{background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:20px;
-    font-family:'Courier New',monospace; font-size:15px; font-weight:800; color:#1e293b;
-    box-shadow:inset 0 2px 4px rgba(0,0,0,0.03);}
+/* ── Solution & Sidebar ── */
+.sol-box{
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: 20px; padding: 24px;
+    font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+}
 
-/* ── Sidebar ── */
-[data-testid="stSidebar"]{background:#ffffff!important; border-right:1px solid #f1f5f9!important;}
-[data-testid="stSidebar"] *{color:#475569!important;}
-[data-testid="stSidebar"] hr{border-color:#f1f5f9!important;}
+[data-testid="stSidebar"]{
+    background: rgba(255, 255, 255, 0.8)!important;
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(0,0,0,0.05)!important;
+}
 </style>
 """, unsafe_allow_html=True)
 
