@@ -260,8 +260,7 @@ with st.sidebar:
             st.session_state.confirmed_faces = []; st.session_state.last_solution = None
             push_history(); st.rerun()
 
-st.title("🧩 Rubik's Solver")
-st.markdown("<p style='color:#94a3b8; margin-top:-15px; margin-bottom:25px;'>Concise Computer Vision AI</p>", unsafe_allow_html=True)
+# ── Title is now moved to sidebar for a cleaner studio layout ──
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SCAN & SOLVE PAGE
