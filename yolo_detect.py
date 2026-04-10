@@ -28,16 +28,18 @@ from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Default model path strictly prioritizes best.pt
 MODEL_PATH = os.path.join(BASE_DIR, "best.pt")
 
 if not os.path.exists(MODEL_PATH):
-    # Fallback 1: Check for yolov8n.pt in base dir
-    fallback = os.path.join(BASE_DIR, "yolov8n.pt")
-    if os.path.exists(fallback):
-        MODEL_PATH = fallback
+    # If best.pt is missing, we try to find any existing .pt model in the directory
+    # (Checking for yolov8n.pt or any custom weight file)
+    weights = [f for f in os.listdir(BASE_DIR) if f.endswith(".pt")]
+    if weights:
+        MODEL_PATH = os.path.join(BASE_DIR, weights[0])
     else:
-        # Fallback 2: Check standard training output location
-        MODEL_PATH = os.path.join(BASE_DIR, "runs", "detect", "rubik_cube", "weights", "best.pt")
+        # Final fallback to standard training output location
+        MODEL_PATH = os.path.join(DATASET_PATH if 'DATASET_PATH' in locals() else BASE_DIR, "runs", "detect", "train", "weights", "best.pt")
 
 # Detection thresholds
 CONFIDENCE_THRESHOLD = 0.25
