@@ -19,94 +19,40 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Global Studio Aesthetic ── */
 html,body,[data-testid="stAppViewContainer"],[data-testid="stMain"]{
     font-family:'Outfit',sans-serif!important;
     background: radial-gradient(circle at 0% 0%, #f8fafc 0%, #e2e8f0 100%)!important;
     color:#1e293b!important;
 }
 
-/* ── SAFE AREA: Prevent Streamlit Top Menu from blocking Title ── */
 [data-testid="stHeader"] { background-color: transparent !important; }
-[data-testid="stMainBlockContainer"]{ padding-top: 70px !important; }
+[data-testid="stMainBlockContainer"]{ padding-top: 50px !important; }
 
-/* ── Dedicated Title Styling ── */
-.app-title {
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 0.2rem;
-    line-height: 1.2;
-}
-.app-subtitle {
-    font-size: 1.1rem;
-    color: #64748b;
-    margin-bottom: 2rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-}
+.app-title { font-size: 2.8rem; font-weight: 800; color: #0f172a; margin-bottom: 0.2rem; line-height: 1.2; }
+.app-subtitle { font-size: 1.1rem; color: #64748b; margin-bottom: 2rem; font-weight: 500; letter-spacing: 0.5px; }
 
-/* ── Glassmorphic Cards ── */
 .mcard{
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 28px;
-    padding: 32px;
-    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 28px; padding: 32px; margin-bottom: 24px;
     box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05), 0 5px 15px -5px rgba(0,0,0,0.02);
 }
-.slabel{
-    font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-    color: #64748b; margin-bottom: 14px; display: block; opacity: 0.9;
-}
+.slabel{ font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #64748b; margin-bottom: 14px; display: block; opacity: 0.9; }
 
-/* ── Premium Control Bar ── */
-.power-btn{
-    border-radius: 14px!important; font-weight: 700!important; 
-    border: 1px solid rgba(255,255,255,0.8)!important;
-    background: rgba(255,255,255,0.5)!important;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05)!important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)!important;
-}
-
-/* ── Tactile Grid Stickers ── */
 .stButton>button{
-    border-radius: 12px!important; 
-    font-family: 'Outfit',sans-serif!important;
-    font-weight: 800!important;
-    background: #ffffff!important;
-    border: 1.5px solid #f1f5f9!important;
+    border-radius: 12px!important; font-family: 'Outfit',sans-serif!important; font-weight: 800!important;
+    background: #ffffff!important; border: 1.5px solid #f1f5f9!important;
     box-shadow: inset 0 -4px 6px rgba(0,0,0,0.03), 0 4px 10px -2px rgba(0,0,0,0.05)!important;
     transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)!important;
 }
-.stButton>button:hover{
-    transform: translateY(-2px) scale(1.03)!important;
-    box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1)!important;
-    border-color: #6366f1!important;
-}
-.stButton>button:active{transform: scale(0.95)!important;}
+.stButton>button:hover{ transform: translateY(-2px) scale(1.03)!important; box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1)!important; border-color: #6366f1!important; }
+.stButton>button:active{ transform: scale(0.95)!important; }
 
-/* ── Action Footer ── */
 .action-row{display:flex; gap:12px; margin-top:24px; padding-top:24px; border-top:1px solid rgba(0,0,0,0.03);}
-
-/* ── Solution & Sidebar ── */
 .sol-box{
-    background: rgba(248, 250, 252, 0.8);
-    border-radius: 20px; padding: 24px;
-    font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+    background: rgba(248, 250, 252, 0.8); border-radius: 20px; padding: 24px;
+    font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800; box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
 }
-
-[data-testid="stSidebar"]{
-    background: rgba(255, 255, 255, 0.8)!important;
-    backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(0,0,0,0.05)!important;
-}
-
-/* ── Live Cube Map & Detection Feedbacks ── */
-/* ... (保留你原本所有的 CSS，包含 mini-grid 等) ... */
+[data-testid="stSidebar"]{ background: rgba(255, 255, 255, 0.8)!important; backdrop-filter: blur(10px); border-right: 1px solid rgba(0,0,0,0.05)!important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -114,11 +60,9 @@ html,body,[data-testid="stAppViewContainer"],[data-testid="stMain"]{
 # CONSTANTS & SESSION STATE
 # ══════════════════════════════════════════════════════════════════════════════
 FACES         = ['Up','Left','Front','Right','Back','Down']
-HEX_COLORS    = {'White':'#f1f5f9','Red':'#ef4444','Green':'#22c55e',
-                  'Yellow':'#eab308','Orange':'#f97316','Blue':'#3b82f6'}
+HEX_COLORS    = {'White':'#f1f5f9','Red':'#ef4444','Green':'#22c55e', 'Yellow':'#eab308','Orange':'#f97316','Blue':'#3b82f6'}
 COLOR_EMOJIS  = {'White':'⬜','Red':'🟥','Green':'🟩','Yellow':'🟨','Orange':'🟧','Blue':'🟦'}
-CENTER_COLORS = {'Up':'White','Left':'Orange','Front':'Green',
-                  'Right':'Red','Back':'Blue','Down':'Yellow'}
+CENTER_COLORS = {'Up':'White','Left':'Orange','Front':'Green', 'Right':'Red','Back':'Blue','Down':'Yellow'}
 CALIB_FILE    = "calibration_profile.json"
 
 _DEFAULTS = {
@@ -136,13 +80,11 @@ _DEFAULTS = {
 
 if 'custom_std_colors' not in st.session_state and os.path.exists(CALIB_FILE):
     try:
-        with open(CALIB_FILE) as fh:
-            _DEFAULTS['custom_std_colors'] = json.load(fh)
+        with open(CALIB_FILE) as fh: _DEFAULTS['custom_std_colors'] = json.load(fh)
     except Exception: pass
 
 for k, v in _DEFAULTS.items():
-    if k not in st.session_state:
-        st.session_state[k] = v
+    if k not in st.session_state: st.session_state[k] = v
 
 if st.session_state.history is None:
     st.session_state.history = [json.dumps({"cube_state": st.session_state.cube_state, "confirmed_faces": st.session_state.confirmed_faces})]
@@ -158,14 +100,9 @@ def push_history():
 # HELPERS & OpenCV FUNCTIONS
 # ══════════════════════════════════════════════════════════════════════════════
 def get_std_colors():
-    d = {'White':(0,30,220),'Yellow':(30,160,200),'Orange':(12,200,240),
-         'Red':(0,210,180),'Green':(60,180,150),'Blue':(110,180,160)}
+    d = {'White':(0,30,220),'Yellow':(30,160,200),'Orange':(12,200,240), 'Red':(0,210,180),'Green':(60,180,150),'Blue':(110,180,160)}
     for k, v in st.session_state.custom_std_colors.items(): d[k] = tuple(v)
     return d
-
-def hex_to_bgr(h):
-    h = h.lstrip('#')
-    return (int(h[4:6],16), int(h[2:4],16), int(h[0:2],16))
 
 def face_complete(f): return f in st.session_state.get('confirmed_faces', [])
 
@@ -180,24 +117,16 @@ def unmark_confirmed(face):
 def classify_color_lab(bgr_pixel, std_colors):
     pixel_mat = np.uint8([[bgr_pixel]])
     lab_pixel = cv2.cvtColor(pixel_mat, cv2.COLOR_BGR2LAB)[0][0]
-    
-    min_dist = float('inf')
-    best_color = 'White' 
-    
+    min_dist = float('inf'); best_color = 'White' 
     for color_name, hsv_val in std_colors.items():
         std_bgr = cv2.cvtColor(np.uint8([[[hsv_val[0], hsv_val[1], hsv_val[2]]]]), cv2.COLOR_HSV2BGR)
         std_lab = cv2.cvtColor(std_bgr, cv2.COLOR_BGR2LAB)[0][0]
-        
         dist = np.linalg.norm(lab_pixel.astype(float) - std_lab.astype(float))
-        
         if dist < min_dist:
-            min_dist = dist
-            best_color = color_name
-            
+            min_dist = dist; best_color = color_name
     return best_color
 
-def classify_color_mlp(bgr_pixel):
-    return "White"
+def classify_color_mlp(bgr_pixel): return "White"
     
 def _warp_to_300(img_bgr):
     h, w = img_bgr.shape[:2]
@@ -216,10 +145,15 @@ def _grid_colors_with_pixels(warped, std_colors, classifier_fn):
                 sl = x1+int(moms["m10"]/moms["m00"]); sm = y1+int(moms["m01"]/moms["m00"])
                 if np.sqrt((sl-tx)**2+(sm-ty)**2) < 30: fx, fy = sl, sm
             roi = warped[max(0,fy-8):min(300,fy+8), max(0,fx-8):min(300,fx+8)]
+            
+            # 🛡️ 修復2: OpenCV 極端反光崩潰保護
             if roi.size > 0:
                 rh, rw = roi.shape[:2]; c_ = roi[rh//4:rh-rh//4, rw//4:rw-rw//4]
-                bgr = np.median(c_, axis=(0,1)).astype(np.uint8)
+                if c_.size > 0:
+                    bgr = np.median(c_, axis=(0,1)).astype(np.uint8)
+                else: bgr = np.zeros(3, dtype=np.uint8)
             else: bgr = np.zeros(3, dtype=np.uint8)
+            
             detected[r*3+c] = classifier_fn(bgr)
             raw_bgrs[r*3+c] = bgr
     return detected, raw_bgrs
@@ -252,9 +186,21 @@ def render_live_cube_map(active_face):
         shadow = "0 0 12px rgba(99,102,241,0.3)" if is_act else ("0 0 8px rgba(34,197,94,0.2)" if is_conf else "none")
         icon = "✏️" if is_act else ("✅" if is_conf else "⭕")
         cells = "".join([f'<div style="width:22px;height:22px;border-radius:3px;background:{HEX_COLORS.get(cube[face_name][i], "#f1f5f9")};"></div>' for i in range(9)])
-        return f'<div style="display:inline-block;margin:3px;vertical-align:top;"><div style="font-size:10px;font-weight:700;text-align:center;color:{t_col};margin-bottom:4px;">{icon} {face_name}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:8px;border:2px solid {b_col};box-shadow:{shadow};padding:2px;">{cells}</div></div>'
+        return f'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:10px;font-weight:700;text-align:center;color:{t_col};margin-bottom:4px;">{icon} {face_name}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:8px;border:2px solid {b_col};box-shadow:{shadow};padding:2px;">{cells}</div></div>'
     
-    html = f'''<html><body style="margin:0;padding:0;background:transparent;font-family:Outfit,sans-serif;"><div style="background:rgba(255,255,255,0.9);border-radius:20px;padding:20px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 24px -8px rgba(0,0,0,0.06);"><div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#64748b;margin-bottom:16px;text-align:center;">🗺️ LIVE CUBE MAP</div><div style="text-align:center;"><div style="margin-left:78px;margin-bottom:2px;">{face_html('Up')}</div><div>{face_html('Left')}{face_html('Front')}{face_html('Right')}{face_html('Back')}</div><div style="margin-left:78px;margin-top:2px;">{face_html('Down')}</div></div><div style="text-align:center;margin-top:14px;font-size:10px;color:#94a3b8;font-weight:700;">✅ {len(confirmed)}/6 FACES CONFIRMED</div></div></body></html>'''
+    html = f'''<html><body style="margin:0;padding:0;background:transparent;font-family:Outfit,sans-serif;">
+    <div style="background:rgba(255,255,255,0.9);border-radius:20px;padding:20px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 24px -8px rgba(0,0,0,0.06); overflow-x:auto;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#64748b;margin-bottom:16px;text-align:center;">🗺️ LIVE CUBE MAP</div>
+        <div style="display:grid; grid-template-columns:78px 78px 78px 78px; gap:6px; justify-content:center; width:max-content; margin:0 auto;">
+            <div style="grid-column:2;">{face_html('Up')}</div>
+            <div style="grid-column:1; grid-row:2;">{face_html('Left')}</div>
+            <div style="grid-column:2; grid-row:2;">{face_html('Front')}</div>
+            <div style="grid-column:3; grid-row:2;">{face_html('Right')}</div>
+            <div style="grid-column:4; grid-row:2;">{face_html('Back')}</div>
+            <div style="grid-column:2; grid-row:3;">{face_html('Down')}</div>
+        </div>
+        <div style="text-align:center;margin-top:16px;font-size:10px;color:#94a3b8;font-weight:700;">✅ {len(confirmed)}/6 FACES CONFIRMED</div>
+    </div></body></html>'''
     components.html(html, height=400)
 
 def render_detection_feedback(scan_result):
@@ -302,15 +248,18 @@ with st.sidebar:
             push_history(); st.rerun()
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TOP TITLE AREA (Prevents Overlap from Streamlit Menu)
+# MAIN APP
 # ══════════════════════════════════════════════════════════════════════════════
+
+# 🛡️ 修復3: 全局顯示標題，無論在哪個模式都不會消失
+st.markdown('''
+    <div class="app-title">🧊 AI Rubik's Vision Engine</div>
+    <div class="app-subtitle">Multi-Algorithm Comparison & Topology Validation System</div>
+''', unsafe_allow_html=True)
+
 if app_mode == "🧩 Scan & Solve":
-    st.markdown('''
-        <div class="app-title">🧊 AI Rubik's Vision Engine</div>
-        <div class="app-subtitle">Multi-Algorithm Comparison & Topology Validation System</div>
-    ''', unsafe_allow_html=True)
-    
     curr = st.session_state.active_face
+    
     # ── One-Line Navigation & Palette ───────────────────────────────────────
     pw_cols = st.columns(6)
     for i, f in enumerate(FACES):
@@ -359,7 +308,6 @@ if app_mode == "🧩 Scan & Solve":
                         elif "YOLOv8" in algo_choice:
                             try:
                                 import yolo_detect
-                                # det, raw_bgrs, overlay, err = yolo_detect.run_yolo_extract(raw, CENTER_COLORS[curr])
                                 err = "🚧 YOLO Module Pending Integration from Team Member A."
                             except ImportError:
                                 err = "❌ Missing File: Cannot find 'yolo_detect.py'."
@@ -369,7 +317,6 @@ if app_mode == "🧩 Scan & Solve":
                         elif "SVM" in algo_choice:
                             try:
                                 import svm_predict
-                                # det, raw_bgrs, overlay, err = svm_predict.run_svm_extract(raw, CENTER_COLORS[curr])
                                 err = "🚧 SVM Module Pending Integration from Team Member B."
                             except ImportError:
                                 err = "❌ Missing File: Cannot find 'svm_predict.py'."
@@ -379,12 +326,13 @@ if app_mode == "🧩 Scan & Solve":
                     except Exception as fatal_e:
                         err = f"🚨 Fatal Vision Engine Error: {str(fatal_e)}"
 
-                    # Handle Scan Result
                     if err:
                         st.error(err)
                     elif det:
                         det[4] = CENTER_COLORS[curr]
                         st.session_state.cube_state[curr] = det
+                        # 🛡️ 修復1: 確保每次 AI 改變魔方狀態時，清空舊的解答
+                        st.session_state.last_solution = None 
                         mark_confirmed(curr); push_history()
                         st.session_state.scan_result = {
                             'detected': det,
@@ -413,6 +361,7 @@ if app_mode == "🧩 Scan & Solve":
                     unmark_confirmed(curr)
                     st.session_state.cube_state[curr] = ['White']*4+[CENTER_COLORS[curr]]+['White']*4
                     st.session_state.scan_result = None
+                    st.session_state.last_solution = None # 🛡️ 修復1: 清空舊解答
                     if scan_key in st.session_state: del st.session_state[scan_key]
                     push_history(); st.rerun()
         else:
@@ -423,6 +372,7 @@ if app_mode == "🧩 Scan & Solve":
         C_SEQ = ['White', 'Red', 'Green', 'Yellow', 'Orange', 'Blue']
         def cycle_stk(face, ix):
             st.session_state.cube_state[face][ix] = C_SEQ[(C_SEQ.index(st.session_state.cube_state[face][ix]) + 1) % len(C_SEQ)]
+            st.session_state.last_solution = None # 🛡️ 修復1: 確保手動改顏色時，清空舊解答
             mark_confirmed(face); push_history()
 
         for r in range(3):
@@ -443,12 +393,9 @@ if app_mode == "🧩 Scan & Solve":
     if not errs:
         st.success("✨ Sticker count is correct! Ready to validate physics.")
         if st.button("⚡ Solve Cube (Physics Check)", use_container_width=True, type="primary"):
-            
-            # THE CORE VALIDATION: Unpacking tuple from solve_cube
             is_success, result_message = solve_cube(st.session_state.cube_state)
-            
             if not is_success:
-                st.error(result_message) # This prints exactly what went wrong in Kociemba
+                st.error(result_message) 
             else:
                 st.session_state.last_solution = result_message
                 st.rerun()
@@ -464,4 +411,4 @@ if app_mode == "🧩 Scan & Solve":
         st.markdown('</div>', unsafe_allow_html=True)
 
 if app_mode == "⚙️ Calibration":
-    st.markdown('<div class="mcard"><h2>⚙️ Environment Calibration</h2><p>Adjust OpenCV HSV/LAB thresholds here.</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="mcard"><h2>⚙️ Environment Calibration</h2><p>Adjust OpenCV HSV/LAB thresholds here. (Module in development)</p></div>', unsafe_allow_html=True)
