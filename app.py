@@ -151,6 +151,17 @@ html,body,[data-testid="stAppViewContainer"],[data-testid="stMain"]{
     width: 16px; height: 16px; border-radius: 4px;
     border: 1px solid rgba(0,0,0,0.1);
 }
+.app-title {
+    font-size: 2.8rem; font-weight: 800; text-align: center;
+    background: linear-gradient(90deg, #1e293b, #474ef1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+}
+.app-subtitle {
+    font-size: 0.9rem; font-weight: 600; text-align: center;
+    color: #64748b; letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 40px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -292,14 +303,17 @@ def run_method_a(raw_bytes, expected_center):
 def run_method_b(raw_bytes, expected_center):
     """YOLOv8 Detection Method"""
     try:
-        # 1. Detect stickers via YOLO
-        stickers = yolo_detect.detect_stickers(raw_bytes)
+        # Get stickers AND annotated overlay
+        overlay, stickers = yolo_detect.detect_and_draw(raw_bytes)
         
         if not stickers:
-            return None, None, None, "❌ No stickers detected via YOLO. Please ensure the cube face is well-lit and centered."
-        
-        # 2. Extract detected colors and pixels
-        # yolo_detect returns 9 stickers sorted as grid.
+            # Improvement: Show the overlay even if 0 detected to help user troubleshoot
+            return None, None, overlay, "❌ No stickers detected via YOLO. Please ensure the cube face is well-lit and centered."
+
+        # Filter for stickers only
+        stickers = [s for s in stickers if s["class_name"] == yolo_detect.CLASS_STICKER]
+        if len(stickers) != 9:
+            return None, None, overlay, f"⚠️ YOLO detected {len(stickers)} stickers (expected 9). Please adjust position."
         # If less than 9, we fall back to OpenCV for the rest (or show warning)
         if len(stickers) < 9:
             return None, None, None, f"⚠️ YOLO only detected {len(stickers)}/9 stickers. Try again or use OpenCV."
@@ -478,6 +492,12 @@ with st.sidebar:
             push_history(); st.rerun()
 
 # ── Title is now moved to sidebar for a cleaner studio layout ──
+
+# ── MAIN TITLE ──────────────────────────────────────────────────────────────
+st.markdown('''
+    <div class="app-title">🧊 AI Rubik's Vision Engine</div>
+    <div class="app-subtitle">Multi-Algorithm Comparison & Topology Validation System</div>
+''', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SCAN & SOLVE PAGE
