@@ -310,16 +310,24 @@ def run_method_b(raw_bytes, expected_center):
             # Improvement: Show the overlay even if 0 detected to help user troubleshoot
             return None, None, overlay, "❌ No stickers detected via YOLO. Please ensure the cube face is well-lit and centered."
 
-        # Filter for stickers only
-        stickers = [s for s in stickers if s["class_name"] == yolo_detect.CLASS_STICKER]
+        # Note: We no longer filter by "class_name == sticker" to be more robust
+        # We take whatever the model detected as the 9 stickers
         if len(stickers) != 9:
-            return None, None, overlay, f"⚠️ YOLO detected {len(stickers)} stickers (expected 9). Please adjust position."
+            return None, None, overlay, f"⚠️ YOLO detected {len(stickers)} features (expected 9). Please adjust position or lighting."
         # If less than 9, we fall back to OpenCV for the rest (or show warning)
         if len(stickers) < 9:
             return None, None, None, f"⚠️ YOLO only detected {len(stickers)}/9 stickers. Try again or use OpenCV."
 
-        det = [s["color"] if s["color"] else "White" for s in stickers]
-        raw_bgrs = [np.median(s["cropped"], axis=(0, 1)).astype(np.uint8) for s in stickers]
+        std = get_std_colors()
+        det = []
+        raw_bgrs = []
+        for s in stickers:
+            bgr = np.median(s["cropped"], axis=(0, 1)).astype(np.uint8)
+            raw_bgrs.append(bgr)
+            if s["color"]:
+                det.append(s["color"])
+            else:
+                det.append(classify_color_lab(bgr, std))
         
         # 3. Get annotated image (showing bounding boxes)
         annotated_bgr, _ = yolo_detect.detect_and_draw(raw_bytes)
