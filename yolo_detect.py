@@ -26,11 +26,13 @@ from pathlib import Path
 # Configuration
 # ---------------------------------------------------------------------------
 
-# Path to the trained YOLOv8 weights — update this after training
-MODEL_PATH = os.environ.get(
-    "YOLO_MODEL_PATH",
-    os.path.join(os.path.dirname(__file__), "runs", "detect", "rubik_cube", "weights", "best.pt"),
-)
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "best.pt")
+
+if not os.path.exists(MODEL_PATH):
+    MODEL_PATH = os.environ.get(
+        "YOLO_MODEL_PATH",
+        os.path.join(os.path.dirname(__file__), "runs", "detect", "rubik_cube", "weights", "best.pt"),
+    )
 
 # Detection thresholds
 CONFIDENCE_THRESHOLD = 0.25
