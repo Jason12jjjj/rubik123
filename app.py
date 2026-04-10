@@ -4,11 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import numpy as np
 import cv2
-from rubiks_core import (
-    validate_cube_state, solve_cube,
-    classify_color_lab, classify_color_hsv, classify_color_knn, classify_color_mlp,
-    extract_center_bgr, COLORS,
-)
+from rubiks_core import validate_cube_state, solve_cube, COLORS
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE CONFIG
@@ -161,7 +157,6 @@ def push_history():
 # ══════════════════════════════════════════════════════════════════════════════
 # HELPERS & OpenCV FUNCTIONS
 # ══════════════════════════════════════════════════════════════════════════════
-# (這裡保留你原本的 get_std_colors, face_complete, run_method_a 等函式，無需變動)
 def get_std_colors():
     d = {'White':(0,30,220),'Yellow':(30,160,200),'Orange':(12,200,240),
          'Red':(0,210,180),'Green':(60,180,150),'Blue':(110,180,160)}
@@ -182,6 +177,28 @@ def unmark_confirmed(face):
     cf = st.session_state.confirmed_faces
     if face in cf: cf.remove(face)
 
+    def classify_color_lab(bgr_pixel, std_colors):
+    pixel_mat = np.uint8([[bgr_pixel]])
+    lab_pixel = cv2.cvtColor(pixel_mat, cv2.COLOR_BGR2LAB)[0][0]
+    
+    min_dist = float('inf')
+    best_color = 'White' 
+    
+    for color_name, hsv_val in std_colors.items():
+        std_bgr = cv2.cvtColor(np.uint8([[[hsv_val[0], hsv_val[1], hsv_val[2]]]]), cv2.COLOR_HSV2BGR)
+        std_lab = cv2.cvtColor(std_bgr, cv2.COLOR_BGR2LAB)[0][0]
+        
+        dist = np.linalg.norm(lab_pixel.astype(float) - std_lab.astype(float))
+        
+        if dist < min_dist:
+            min_dist = dist
+            best_color = color_name
+            
+    return best_color
+
+def classify_color_mlp(bgr_pixel):
+    return "White"
+    
 def _warp_to_300(img_bgr):
     h, w = img_bgr.shape[:2]
     gs = int(min(h,w)*0.7); ox, oy = (w-gs)//2, (h-gs)//2
