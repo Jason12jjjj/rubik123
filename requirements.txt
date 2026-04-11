@@ -1,7 +1,6 @@
 opencv-python-headless
 streamlit
 numpy
-Pillow
 kociemba
 scikit-learn
 joblib

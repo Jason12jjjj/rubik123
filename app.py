@@ -745,8 +745,11 @@ if app_mode == "⚙️ Calibration":
             st.image(raw_b, caption="Reference Photo", width=300)
             
             if st.button(f"🎯 Calibrate {calib_color} Target", type="primary"):
-                bgr = extract_center_bgr(raw_b)
+                bgr, annotated = extract_center_bgr(raw_b)
                 if bgr is not None:
+                    # Show exactly what the AI saw to the user
+                    st.image(annotated, caption="🔍 Sampling Area", width=300)
+                    
                     # Convert BGR to HSV for the classifier engine
                     hsv = cv2.cvtColor(np.uint8([[bgr]]), cv2.COLOR_BGR2HSV)[0][0]
                     # Convert to list for JSON compatibility

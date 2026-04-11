@@ -310,16 +310,33 @@ def classify_color_mlp(bgr_pixel):
 
 def extract_center_bgr(image_bytes_data):
     """
-    Extract the median BGR pixel from a 60x60 centre crop of an image.
+    Extract the median BGR pixel from a 60x60 centre crop of an image
+    and return an annotated image showing the sampling box.
+    Returns: (bgr_pixel_array, annotated_image_rgb)
     """
     arr = np.frombuffer(image_bytes_data, dtype=np.uint8)
     img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None:
-        return None
+        return None, None
     h, w = img.shape[:2]
     cx, cy = w // 2, h // 2
-    roi = img[max(0, cy - 30):cy + 30, max(0, cx - 30):cx + 30]
-    return np.median(roi, axis=(0, 1)).astype(np.uint8)
+    
+    # 60x60 region
+    x1, x2 = max(0, cx - 30), min(w, cx + 30)
+    y1, y2 = max(0, cy - 30), min(h, cy + 30)
+    
+    roi = img[y1:y2, x1:x2]
+    median_bgr = np.median(roi, axis=(0, 1)).astype(np.uint8)
+    
+    # Create an annotated image to show the user exactly where we sampled
+    annotated = img.copy()
+    cv2.rectangle(annotated, (x1, y1), (x2, y2), (0, 0, 255), 4)
+    cv2.line(annotated, (cx - 10, cy), (cx + 10, cy), (0, 255, 0), 2)
+    cv2.line(annotated, (cx, cy - 10), (cx, cy + 10), (0, 255, 0), 2)
+    
+    annotated_rgb = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
+    
+    return median_bgr, annotated_rgb
 
 
 def compare_methods(samples):
