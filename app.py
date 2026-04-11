@@ -266,9 +266,10 @@ def _warp_to_300(img_bgr):
     return cv2.resize(img_bgr[oy:oy+gs, ox:ox+gs], (300,300))
 
 def _grid_colors_with_pixels(warped, std_colors, classifier_fn, use_blocks=False):
-    """Returns (detected_colors[9], raw_bgr_pixels[9])"""
+    """Returns (detected_colors[9], raw_bgr_pixels[9], centers[9])"""
     detected = ['White']*9
     raw_bgrs = [np.zeros(3, dtype=np.uint8)]*9
+    centers = [(0, 0)] * 9
     hsv_w = cv2.cvtColor(warped, cv2.COLOR_BGR2HSV); sat_w = hsv_w[:,:,1]
     for r in range(3):
         for c in range(3):
@@ -279,6 +280,8 @@ def _grid_colors_with_pixels(warped, std_colors, classifier_fn, use_blocks=False
             if moms["m00"] > 50:
                 sl = x1+int(moms["m10"]/moms["m00"]); sm = y1+int(moms["m01"]/moms["m00"])
                 if np.sqrt((sl-tx)**2+(sm-ty)**2) < 30: fx, fy = sl, sm
+            
+            centers[r*3+c] = (fx, fy)
             
             # Extract ROI for median and block
             roi_size = 8 if not use_blocks else 25 # Larger for SVM features
@@ -297,34 +300,43 @@ def _grid_colors_with_pixels(warped, std_colors, classifier_fn, use_blocks=False
                 raw_bgrs[r*3+c] = np.zeros(3, dtype=np.uint8)
                 detected[r*3+c] = "White"
                 
-    return detected, raw_bgrs
+    return detected, raw_bgrs, centers
 
-def _draw_grid_overlay(warped_rgb):
-    """Draw a 3x3 grid overlay on the warped image for visual feedback."""
+def _draw_grid_overlay(warped_rgb, centers=None):
+    """Draw dynamic bounding boxes on the warped image for visual feedback."""
     vis = warped_rgb.copy()
     h, w = vis.shape[:2]
-    # Grid lines
-    for i in range(1, 3):
-        cv2.line(vis, (i*w//3, 0), (i*w//3, h), (100, 100, 255), 2)
-        cv2.line(vis, (0, i*h//3), (w, i*h//3), (100, 100, 255), 2)
-    # Border
-    cv2.rectangle(vis, (1,1), (w-2,h-2), (100, 100, 255), 3)
-    # Center dots
-    for r in range(3):
-        for c in range(3):
-            cx = int((c+0.5)*w/3)
-            cy = int((r+0.5)*h/3)
-            cv2.circle(vis, (cx, cy), 6, (255, 255, 255), -1)
-            cv2.circle(vis, (cx, cy), 6, (100, 100, 255), 2)
+    
+    if centers:
+        # Draw intelligent square bounding boxes around sampled centers
+        box_size = 35 # half-width of the drawn box
+        for (cx, cy) in centers:
+            # Draw a nice bounding box like YOLO
+            cv2.rectangle(vis, (max(0, cx-box_size), max(0, cy-box_size)), 
+                               (min(w, cx+box_size), min(h, cy+box_size)), (0, 255, 0), 3)
+            # Center dot
+            cv2.circle(vis, (cx, cy), 5, (255, 255, 255), -1)
+            cv2.circle(vis, (cx, cy), 5, (0, 0, 0), 2)
+    else:
+        # Fallback Grid
+        for i in range(1, 3):
+            cv2.line(vis, (i*w//3, 0), (i*w//3, h), (100, 100, 255), 2)
+            cv2.line(vis, (0, i*h//3), (w, i*h//3), (100, 100, 255), 2)
+        cv2.rectangle(vis, (1,1), (w-2,h-2), (100, 100, 255), 3)
+        for r in range(3):
+            for c in range(3):
+                cx, cy = int((c+0.5)*w/3), int((r+0.5)*h/3)
+                cv2.circle(vis, (cx, cy), 6, (255, 255, 255), -1)
+                cv2.circle(vis, (cx, cy), 6, (100, 100, 255), 2)
     return vis
 
 def run_method_a(raw_bytes, expected_center):
     arr = np.frombuffer(raw_bytes, dtype=np.uint8); img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None: return None, None, None, "❌ Cannot decode image."
     std = get_std_colors(); warped = _warp_to_300(img)
-    det, raw_bgrs = _grid_colors_with_pixels(warped, std, lambda b: classify_color_lab(b, std))
+    det, raw_bgrs, centers = _grid_colors_with_pixels(warped, std, lambda b: classify_color_lab(b, std))
     warped_rgb = cv2.cvtColor(warped, cv2.COLOR_BGR2RGB)
-    overlay = _draw_grid_overlay(warped_rgb)
+    overlay = _draw_grid_overlay(warped_rgb, centers)
     return det, raw_bgrs, overlay, None
 
 def run_method_b(raw_bytes, expected_center):
@@ -385,9 +397,9 @@ def run_method_c(raw_bytes, expected_center):
     arr = np.frombuffer(raw_bytes, dtype=np.uint8); img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None: return None, None, None, "❌ Cannot decode image."
     std = get_std_colors(); warped = _warp_to_300(img)
-    det, raw_bgrs = _grid_colors_with_pixels(warped, std, lambda b: svm_detect.classify_color_svm(b), use_blocks=True)
+    det, raw_bgrs, centers = _grid_colors_with_pixels(warped, std, lambda b: svm_detect.classify_color_svm(b), use_blocks=True)
     warped_rgb = cv2.cvtColor(warped, cv2.COLOR_BGR2RGB)
-    overlay = _draw_grid_overlay(warped_rgb)
+    overlay = _draw_grid_overlay(warped_rgb, centers)
     return det, raw_bgrs, overlay, None
 
 # ══════════════════════════════════════════════════════════════════════════════
