@@ -237,6 +237,7 @@ def push_history():
 # HELPERS
 # ══════════════════════════════════════════════════════════════════════════════
 def get_std_colors():
+    # Returns dictionary of HSV references
     d = {'White':(0,30,220),'Yellow':(30,160,200),'Orange':(12,200,240),
          'Red':(0,210,180),'Green':(60,180,150),'Blue':(110,180,160)}
     for k, v in st.session_state.custom_std_colors.items(): d[k] = tuple(v)
@@ -529,7 +530,7 @@ with st.sidebar:
     app_mode = st.radio("Mode", ["🧩 Scan & Solve", "⚙️ Calibration"], label_visibility="collapsed")
     st.divider()
     if app_mode == "🧩 Scan & Solve":
-        with st.expander("📊 Sticker Status"):
+        with st.expander("📊 Sticker Stats"):
             all_s = [s for f in FACES for s in st.session_state.cube_state[f]]
             for name in HEX_COLORS:
                 cnt = all_s.count(name); ok = (cnt==9)
@@ -746,9 +747,11 @@ if app_mode == "⚙️ Calibration":
             if st.button(f"🎯 Calibrate {calib_color} Target", type="primary"):
                 bgr = extract_center_bgr(raw_b)
                 if bgr is not None:
+                    # Convert BGR to HSV for the classifier engine
+                    hsv = cv2.cvtColor(np.uint8([[bgr]]), cv2.COLOR_BGR2HSV)[0][0]
                     # Convert to list for JSON compatibility
-                    st.session_state.custom_std_colors[calib_color] = bgr.tolist()
-                    st.success(f"Successfully calibrated {calib_color} to: BGR {bgr.tolist()}")
+                    st.session_state.custom_std_colors[calib_color] = hsv.tolist()
+                    st.success(f"Successfully calibrated {calib_color} to: HSV {hsv.tolist()}")
                 else:
                     st.error("Failed to extract color. Ensure image is valid.")
 
@@ -766,19 +769,22 @@ if app_mode == "⚙️ Calibration":
             st.rerun()
 
     st.divider()
-    st.markdown("#### 3. Active Calibration Status")
-    # Show internal BGR targets
+    st.markdown("#### 3. Active Calibration Stats")
+    # Show internal HSV targets and their visual colors
     std = get_std_colors()
     st_cols = st.columns(3)
-    for i, (name, bgr) in enumerate(std.items()):
-        hex_c = f"#{bgr[2]:02x}{bgr[1]:02x}{bgr[0]:02x}"
+    for i, (name, hsv) in enumerate(std.items()):
+        # Convert HSV back to Hex RGB for UI display
+        rgb = cv2.cvtColor(np.uint8([[[hsv[0], hsv[1], hsv[2]]]]), cv2.COLOR_HSV2RGB)[0][0]
+        hex_c = f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
+        
         st_cols[i%3].markdown(f"""
             <div style='padding:10px; border-radius:10px; background:rgba(255,255,255,0.5); border:1px solid #cbd5e1; margin-bottom:10px;'>
                 <div style='display:flex; align-items:center; gap:8px;'>
                     <div style='width:20px; height:20px; border-radius:4px; background:{hex_c}; border:1px solid #000;'></div>
                     <b>{name}</b>
                 </div>
-                <code style='font-size:10px;'>BGR: {list(bgr)}</code>
+                <code style='font-size:10px;'>HSV: {list(hsv)}</code>
             </div>
         """, unsafe_allow_html=True)
 
