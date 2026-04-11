@@ -116,7 +116,9 @@ def train_model():
     from ultralytics import YOLO
     
     print("🛠️ Initializing Training...")
-    model = YOLO('yolov8n.pt') 
+    # Standardize: Start from best.pt if exists, otherwise start from yolov8n.pt
+    base_model = 'best.pt' if os.path.exists('best.pt') else 'yolov8n.pt'
+    model = YOLO(base_model) 
     
     results = model.train(
         data=str(DATASET_PATH / 'data.yaml'),

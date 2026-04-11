@@ -7,6 +7,7 @@ import cv2
 from rubiks_core import (
     validate_cube_state, solve_cube,
     classify_color_lab, classify_color_hsv, classify_color_knn, classify_color_mlp,
+    classify_color_svm,
     extract_center_bgr, COLORS,
 )
 import yolo_detect
@@ -249,7 +250,7 @@ def _warp_to_300(img_bgr):
     gs = int(min(h,w)*0.7); ox, oy = (w-gs)//2, (h-gs)//2
     return cv2.resize(img_bgr[oy:oy+gs, ox:ox+gs], (300,300))
 
-def _grid_colors_with_pixels(warped, std_colors, classifier_fn):
+def _grid_colors_with_pixels(warped, std_colors, classifier_fn, use_blocks=False):
     """Returns (detected_colors[9], raw_bgr_pixels[9])"""
     detected = ['White']*9
     raw_bgrs = [np.zeros(3, dtype=np.uint8)]*9
@@ -263,13 +264,24 @@ def _grid_colors_with_pixels(warped, std_colors, classifier_fn):
             if moms["m00"] > 50:
                 sl = x1+int(moms["m10"]/moms["m00"]); sm = y1+int(moms["m01"]/moms["m00"])
                 if np.sqrt((sl-tx)**2+(sm-ty)**2) < 30: fx, fy = sl, sm
-            roi = warped[max(0,fy-8):min(300,fy+8), max(0,fx-8):min(300,fx+8)]
+            
+            # Extract ROI for median and block
+            roi_size = 8 if not use_blocks else 25 # Larger for SVM features
+            roi = warped[max(0,fy-roi_size):min(300,fy+roi_size), max(0,fx-roi_size):min(300,fx+roi_size)]
+            
             if roi.size > 0:
                 rh, rw = roi.shape[:2]; c_ = roi[rh//4:rh-rh//4, rw//4:rw-rw//4]
-                bgr = np.median(c_, axis=(0,1)).astype(np.uint8)
-            else: bgr = np.zeros(3, dtype=np.uint8)
-            detected[r*3+c] = classifier_fn(bgr)
-            raw_bgrs[r*3+c] = bgr
+                median_bgr = np.median(c_, axis=(0,1)).astype(np.uint8)
+                
+                if use_blocks:
+                    detected[r*3+c] = classifier_fn(roi) # SVM uses the whole ROI
+                else:
+                    detected[r*3+c] = classifier_fn(median_bgr)
+                raw_bgrs[r*3+c] = median_bgr
+            else:
+                raw_bgrs[r*3+c] = np.zeros(3, dtype=np.uint8)
+                detected[r*3+c] = "White"
+                
     return detected, raw_bgrs
 
 def _draw_grid_overlay(warped_rgb):
@@ -356,7 +368,7 @@ def run_method_c(raw_bytes, expected_center):
     arr = np.frombuffer(raw_bytes, dtype=np.uint8); img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None: return None, None, None, "❌ Cannot decode image."
     std = get_std_colors(); warped = _warp_to_300(img)
-    det, raw_bgrs = _grid_colors_with_pixels(warped, std, lambda b: classify_color_mlp(b))
+    det, raw_bgrs = _grid_colors_with_pixels(warped, std, lambda b: classify_color_svm(b), use_blocks=True)
     warped_rgb = cv2.cvtColor(warped, cv2.COLOR_BGR2RGB)
     overlay = _draw_grid_overlay(warped_rgb)
     return det, raw_bgrs, overlay, None
