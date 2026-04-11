@@ -459,7 +459,7 @@ def render_detection_feedback(scan_result):
     
     # Show the warped image with grid overlay
     if overlay_img is not None:
-        st.image(overlay_img, caption=f"📐 How {engine} cropped & analyzed your photo", use_container_width=True)
+        st.image(overlay_img, caption=f"📐 How {engine} cropped & analyzed your photo", width=300)
     
     st.markdown("---")
     
@@ -582,7 +582,7 @@ if app_mode == "🧩 Scan & Solve":
         if up:
             raw = up.read()
             # 1. Show the uploaded original photo
-            st.image(raw, caption="📷 Your uploaded photo", use_container_width=True)
+            st.image(raw, caption="📷 Your uploaded photo", width=300)
             
             st.divider()
             
