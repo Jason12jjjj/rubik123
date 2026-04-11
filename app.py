@@ -692,23 +692,27 @@ if app_mode == "🧩 Scan & Solve":
     with col_map:
         render_live_cube_map(curr)
 
-    # Action Footer
-    st.markdown('<div class="action-row">', unsafe_allow_html=True)
-    a1, a2, a3 = st.columns(3)
-    if a1.button("🧹 Reset", use_container_width=True):
-        st.session_state.cube_state[curr] = ['White']*4+[CENTER_COLORS[curr]]+['White']*4
-        unmark_confirmed(curr); st.session_state.scan_result = None
-        push_history(); st.rerun()
-    if a2.button("🎨 Fill", use_container_width=True):
-        sel = st.session_state.selected_color
-        st.session_state.cube_state[curr] = [sel]*4+[CENTER_COLORS[curr]]+[sel]*4
-        mark_confirmed(curr); push_history(); st.rerun()
-    if a3.button("🚀 Confirm Face", use_container_width=True, type="primary"):
-        mark_confirmed(curr); rem = [f for f in FACES if not face_complete(f)]
-        if rem: st.session_state.active_face = rem[0]
-        st.session_state.scan_result = None
-        st.rerun()
-    st.markdown('', unsafe_allow_html=True)
+    # Check if we are currently verifying an AI scan
+    is_scanning = bool(st.session_state.scan_result and st.session_state.scan_result.get('face') == curr)
+
+    # Action Footer (Only show when doing manual grid input to avoid button redundancy)
+    if not is_scanning:
+        st.markdown('<div class="action-row">', unsafe_allow_html=True)
+        a1, a2, a3 = st.columns(3)
+        if a1.button("🧹 Reset", use_container_width=True):
+            st.session_state.cube_state[curr] = ['White']*4+[CENTER_COLORS[curr]]+['White']*4
+            unmark_confirmed(curr); st.session_state.scan_result = None
+            push_history(); st.rerun()
+        if a2.button("🎨 Fill Solid Color", use_container_width=True):
+            sel = st.session_state.selected_color
+            st.session_state.cube_state[curr] = [sel]*4+[CENTER_COLORS[curr]]+[sel]*4
+            mark_confirmed(curr); push_history(); st.rerun()
+        if a3.button("🚀 Manual Confirm", use_container_width=True, type="primary"):
+            mark_confirmed(curr); rem = [f for f in FACES if not face_complete(f)]
+            if rem: st.session_state.active_face = rem[0]
+            st.session_state.scan_result = None
+            st.rerun()
+        st.markdown('', unsafe_allow_html=True)
 
     # Result Section
     all_s = [s for f in FACES for s in st.session_state.cube_state[f]]
