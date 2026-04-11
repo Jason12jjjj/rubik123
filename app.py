@@ -529,7 +529,7 @@ with st.sidebar:
     app_mode = st.radio("Mode", ["🧩 Scan & Solve", "⚙️ Calibration"], label_visibility="collapsed")
     st.divider()
     if app_mode == "🧩 Scan & Solve":
-        with st.expander("📊 Sticker Stats"):
+        with st.expander("📊 Sticker Status"):
             all_s = [s for f in FACES for s in st.session_state.cube_state[f]]
             for name in HEX_COLORS:
                 cnt = all_s.count(name); ok = (cnt==9)
@@ -766,7 +766,7 @@ if app_mode == "⚙️ Calibration":
             st.rerun()
 
     st.divider()
-    st.markdown("#### 3. Active Calibration Stats")
+    st.markdown("#### 3. Active Calibration Status")
     # Show internal BGR targets
     std = get_std_colors()
     st_cols = st.columns(3)
