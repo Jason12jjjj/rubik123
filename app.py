@@ -54,6 +54,16 @@ html,body,[data-testid="stAppViewContainer"],[data-testid="stMain"]{
     flex: 1 1 auto!important;
 }
 
+/* EXCEPTION: Manual Grid buttons MUST NOT WRAP or have min-width */
+[data-testid="stHorizontalBlock"] [data-testid="stHorizontalBlock"] {
+    flex-wrap: nowrap!important;
+    gap: 0.1rem!important;
+}
+[data-testid="stHorizontalBlock"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    min-width: 0!important;
+    flex: 1 1 0%!important;
+}
+
 /* ── Glassmorphic Cards ── */
 .mcard{
     background: rgba(255, 255, 255, 0.75);
