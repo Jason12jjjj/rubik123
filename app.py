@@ -790,7 +790,7 @@ if app_mode == "⚙️ Calibration":
     with c1:
         st.markdown("#### 1. Sample Color")
         calib_color = st.selectbox("Select Color to Calibrate:", COLORS)
-        calib_up = st.file_uploader(f"Upload a photo with {calib_color} center", type=['jpg','png','jpeg'], key="calib_up")
+        calib_up = st.file_uploader(f"Upload a photo with {calib_color} center", type=['jpg','png','jpeg'], key=f"calib_up_{calib_color}")
         
         if calib_up:
             raw_b = calib_up.read()
