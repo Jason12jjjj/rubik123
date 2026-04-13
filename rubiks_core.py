@@ -78,96 +78,6 @@ def validate_cube_state(faces_data):
 
 
 # ---------------------------------------------------------------------------
-# Orientation auto-alignment
-# ---------------------------------------------------------------------------
-
-def rotate_face_clockwise(face):
-    """Rotate a 3x3 face 90 degrees clockwise."""
-    idx_map = [6, 3, 0, 7, 4, 1, 8, 5, 2]
-    return [face[i] for i in idx_map]
-
-def rotate_face_counterclockwise(face):
-    """Rotate a 3x3 face 90 degrees counterclockwise."""
-    idx_map = [2, 5, 8, 1, 4, 7, 0, 3, 6]
-    return [face[i] for i in idx_map]
-
-def auto_align_faces(faces_data):
-    """
-    Automatically reorient the cube state so that Up = White and Front = Green.
-    Modifies the dictionary in-place and returns it.
-    """
-    # Normalize color strings to canonical names (just in case)
-    norm_map = {
-        'W':'White','Y':'Yellow','G':'Green','B':'Blue','R':'Red','O':'Orange',
-        'WHITE':'White','YELLOW':'Yellow','GREEN':'Green','BLUE':'Blue','RED':'Red','ORANGE':'Orange'
-    }
-    def norm(c):
-        return norm_map.get(str(c).upper(), c)
-
-    # Normalize all faces
-    for f in FACES:
-        faces_data[f] = [norm(c) for c in faces_data[f]]
-
-    # Map face names to their current center colors
-    centers = {f: faces_data[f][4] for f in FACES}
-
-    # Step 1: Find white center and move that face to Up
-    white_face = None
-    for face, col in centers.items():
-        if col == 'White':
-            white_face = face
-            break
-    if white_face is None:
-        raise ValueError("White center not found. Check color detection.")
-
-    # Rotation mappings to bring white to Up
-    def rotate_to_up(data, from_face):
-        U, R, F, D, L, B = [data[k] for k in ('Up','Right','Front','Down','Left','Back')]
-        if from_face == 'Up':
-            return U, R, F, D, L, B
-        elif from_face == 'Down':
-            return D, R, B, U, L, F
-        elif from_face == 'Front':
-            return F, R, D, B, L, U
-        elif from_face == 'Back':
-            return B, R, U, F, L, D
-        elif from_face == 'Right':
-            return R, B, F, L, U, D
-        elif from_face == 'Left':
-            return L, U, F, R, D, B
-        return U, R, F, D, L, B
-
-    U, R, F, D, L, B = rotate_to_up(faces_data, white_face)
-
-    # Step 2: Now Up is White. Rotate around Y-axis to put Green at Front.
-    if F[4] != 'Green':
-        side_faces = [F, R, B, L]
-        green_idx = None
-        for i, face in enumerate(side_faces):
-            if face[4] == 'Green':
-                green_idx = i
-                break
-        if green_idx is not None:
-            rotate_times = (green_idx - 0) % 4  # target is index 0 (Front)
-            for _ in range(rotate_times):
-                # Rotate cube around Y-axis clockwise (from top view)
-                F, R, B, L = L, F, R, B
-                # U and D faces must be rotated oppositely relative to cube coordinates
-                U = rotate_face_counterclockwise(U)
-                D = rotate_face_clockwise(D)
-
-    # Write back aligned data
-    faces_data['Up']    = U
-    faces_data['Right'] = R
-    faces_data['Front'] = F
-    faces_data['Down']  = D
-    faces_data['Left']  = L
-    faces_data['Back']  = B
-
-    return faces_data
-
-
-# ---------------------------------------------------------------------------
 # Kociemba solver
 # ---------------------------------------------------------------------------
 
@@ -183,12 +93,6 @@ def to_kociemba_string(faces_data):
 
 def solve_cube(faces_data):
     """Run Kociemba and return the solution string, or an error string starting with '!'."""
-    # Auto-align orientation before solving
-    try:
-        faces_data = auto_align_faces(faces_data)
-    except Exception as e:
-        return f"!❌ Orientation alignment failed: {e}"
-
     try:
         cube_string = to_kociemba_string(faces_data)
         solution    = kociemba.solve(cube_string)
