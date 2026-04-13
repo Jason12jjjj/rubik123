@@ -317,6 +317,36 @@ with st.sidebar:
             st.session_state.confirmed_faces = []; st.session_state.last_solution = None
             push_history(); st.rerun()
 
+    # ── MOBILE-FRIENDLY SHOOTING GUIDE (RESPONSIVE) ──
+    st.divider()
+    st.subheader("📱 Standard Cube Setup (Mobile Friendly)")
+
+    st.markdown("""
+    <style>
+    .desktop-guide { display: block; }
+    .mobile-guide { display: none; }
+    @media (max-width: 768px) {
+        .desktop-guide { display: none; }
+        .mobile-guide { display: block; }
+    }
+    </style>
+
+    <div class="desktop-guide">
+    <p><b>Desktop Users:</b><br>
+    Hold cube with <b>White center on Top</b> and <b>Green center facing you</b>.<br>
+    Camera should be parallel to the face being scanned.</p>
+    </div>
+
+    <div class="mobile-guide">
+    <p><b>Mobile Users (Important!):</b><br>
+    1. <b>U (White)</b>: Place cube on table, phone directly above.<br>
+    2. <b>F (Green)</b>: Keep White on top, hold cube parallel to phone screen.<br>
+    3. <b>R/B/L</b>: Keep White pointing to ceiling, rotate cube horizontally.<br>
+    4. <b>D (Yellow)</b>: Flip cube upside down, Yellow toward phone.<br>
+    ⚠️ <b>Never change White's direction (always ceiling) during side scans.</b></p>
+    </div>
+    """, unsafe_allow_html=True)
+
 # ── Title is now moved to sidebar for a cleaner studio layout ──
 
 # ══════════════════════════════════════════════════════════════════════════════
